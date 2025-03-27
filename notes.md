@@ -2,7 +2,7 @@
 
 - `$uname -r`
 - Moduels are prenet in /lib/modules/'uname -r' 
-- $cd /lib/modules/'uname -r' and then $find . -name "*.ko"
+- `$cd /lib/modules/'uname -r'`  and then  `$find . -name "*.ko"`
 - To use modules check config `ls /boot/configs'uname -r' `
 - in-tree module and out-of-tree module
 
