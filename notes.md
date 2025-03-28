@@ -83,4 +83,5 @@ all:
 clean:
   $make -C /lib/module/$(shell uname -r)/build M=${pwd} clean
 ```
-# 
+# insmod callstack
+- insmod -> init_module(user space) -> sys_init_module(system call) -> do verify user -> load_module call -> verify elf and alloc memory for module code(elf code) -> return offest to kernel -> add module info to doubly list -> module_init() is called and we can see dmesg print.
