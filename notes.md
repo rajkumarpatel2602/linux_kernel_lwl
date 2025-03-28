@@ -155,7 +155,7 @@ linux-objs := hello.o // these are required object file to create obj-m
 # .c to .ko using kbuild
 ![image](https://github.com/user-attachments/assets/34b86444-33a9-4c9f-a3b1-8c5267d1aa5c)
 ![image](https://github.com/user-attachments/assets/33216913-661a-4255-844b-9eeeba0771ad)
-.c -> .o, .mod.order(order of module creation in case of multiple modules), .mod.symvers(contains symbols exported by Module?) .mod.c (contains version info) -> .mod.o -> .ko
+.c -> .o, .mod.order(order of module creation in case of multiple modules), .mod.symvers(contains symbols exported by Module?) .mod.c (contains version info) -> .mod.o (& .o are linked by modpost) -> .ko
 
 # modprobe vs insmod
 - Uses standard path (/lib/modules/'uanme -r') and also resolves module dependencies
@@ -165,6 +165,7 @@ linux-objs := hello.o // these are required object file to create obj-m
 ![image](https://github.com/user-attachments/assets/ec7a4fe5-6468-4e2b-a235-453c0827431a)
 - Modules are added in right to left, and while removing, Modules are removed from left to right from .dep file.
 - Reload modules.dep by `$depmod -a`
+- depmod calculates dependencies of all the  modules present in /lib/modules/$(uname -r) folder, and places the dependency information in /lib/modules/$(uname -r)/modules.dep file
 
 # Typechecking of module_init() and module_exit() functions
 ![image](https://github.com/user-attachments/assets/63f55d81-02e8-4e8b-a483-c3d8d4625224)
