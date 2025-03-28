@@ -171,5 +171,20 @@ linux-objs := hello.o // these are required object file to create obj-m
 ![image](https://github.com/user-attachments/assets/63f55d81-02e8-4e8b-a483-c3d8d4625224)
 - observe aliasing of passed functions to cleanup_module and init_module.
 
-# 
-# 
+# Passing args to module
+- module_param(name, type, permission) // e.g. module_name(loop_cnt, int, IORUGO) // #include <linux/moduleparam.h>
+![image](https://github.com/user-attachments/assets/728a0efd-e0c0-4528-8c67-6218d966844a)
+![image](https://github.com/user-attachments/assets/73a008a1-b433-41cd-ab0c-5eed0eb4bcc0) 
+![image](https://github.com/user-attachments/assets/b9d6af6c-0d42-43f7-9f9f-7acc9347ba9b)
+![image](https://github.com/user-attachments/assets/474402dd-ebab-4691-8626-72d2d5c0a14a)
+- in /sys/modules/<module_name>/parameteres/<parameter_name> check params and permissions while loading
+![image](https://github.com/user-attachments/assets/dd9a3f4f-3f0f-42fd-a36f-ab87a5dcada6)
+- if passed permission as 0, then sysfs file for that parameter won't be created.
+- module_param_array(name, type, nump, permission) // e.g. module_name(loop_cnt, int, &args, IORUGO) // #include <linux/moduleparam.h>
+- `$sudo insmod argument.ko param_array=1, 2, 3, 4`
+- `$sudo insmod argument.ko param_array=1, 2, 3, 4, 5` here, loading will fail.
+![image](https://github.com/user-attachments/assets/637383df-77a9-42f7-a0f9-f6cc1ed9f2b3)
+
+#  From where modprobe uses param values?
+- `cat /etc/modprobe.conf` this file is read by modprobe for parameters.
+- To pass args to built-in modules in kernel, use kernel command line and set by `<module_name>.<parameter_name>=value`
