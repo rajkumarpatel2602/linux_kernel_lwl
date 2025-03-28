@@ -85,3 +85,43 @@ clean:
 ```
 # insmod callstack
 - insmod -> init_module(user space) -> sys_init_module(system call) -> do verify user -> load_module call -> verify elf and alloc memory for module code(elf code) -> return offest to kernel -> add module info to doubly list -> module_init() is called and we can see dmesg print.
+
+# What happen if we return -1 from module_init()
+- ![image](https://github.com/user-attachments/assets/dfbb9cfb-2910-437b-9574-ca5ff0410a1a)
+
+# Change module name
+- edit Makefile
+```
+obj-m := linux.o
+linux-objs := hello.o // these are required object file to create obj-m
+```
+![image](https://github.com/user-attachments/assets/744a576e-d923-459c-a54e-2d946a9263be)
+
+# Compiling module with multiple files
+- Just update linux-objs := hello.o func.o // and so on
+![image](https://github.com/user-attachments/assets/0956dd29-5b38-47aa-be73-6102648808cf)
+![image](https://github.com/user-attachments/assets/cf482912-1047-4694-a113-bef22dd203f4)
+
+# Compiling 2 modules with one makefile
+- use obj-m := 1.o and then obj-m := 2.o and keep on using +=
+- user obj-m  := 1.o 2.o 3.o
+- `$sudo insmod 1.ko`
+- `$sudo insmod 2.ko`
+- `$sudo rmmod 1 2`
+![image](https://github.com/user-attachments/assets/82be947a-69b9-4f86-a95b-ea20dec2ce72)
+
+# dmesg in deep
+- When kernel bootsup, before mounting of file system, bootings logs needs preservation. For this, kernel users a ring buffer.
+- This ringbuffer takes all the printk dump in it, and can be viewed by dmesg.
+- Once sysfs is mounted, based on distribution a file will hold printk dump along with ringbuffer.
+- dmesg is used to control contents of ring buffer or to print the ring buffer. Default is to print contents on console.
+- collected logs are getting stored in /var/logs/dmesg
+- `$ps -ef | grep syslog` // can see syslog daemon running.
+- syslogd is periodically reading kernel buffer and writing to some file, decided by distribution. e.g. /var/log/kern.log
+- `$dmesg -c` // clear after dumping logs on console the ring buffer.
+- `$dmesg -C` // simply clear buffer
+- `$dmesg -t` // won't print time stamp
+- `$dmesg -T` // convert epoch timestamp in human readable format
+- `$dmesg -l info, err` // will print only info and err messgages
+- `$dmesg -x` // will print loging level information
+- `$strace dmesg` // shows from perticular file message is being read and dumped on console by default.
