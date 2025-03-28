@@ -51,6 +51,8 @@ module_exit(test_hello_exit);
 - All these is native compilation.
 - For cross compilation modify default kernel macro values for ARCH and CROSS_COMPILE
 - `$make ARCH=arm CROSS_COMPILE=arm-buildroot-linux-uclibceabi- -C build_makefile_for_arm M=${PWD} modules`
+![image](https://github.com/user-attachments/assets/ae911577-06ff-4576-983f-1233c472d501)
+
 - make sure to omit gcc in CROSS_COMPILE option. -C makefile is using different file as /build/modules are build for x86
 
 # Loading the module
@@ -125,3 +127,48 @@ linux-objs := hello.o // these are required object file to create obj-m
 - `$dmesg -l info, err` // will print only info and err messgages
 - `$dmesg -x` // will print loging level information
 - `$strace dmesg` // shows from perticular file message is being read and dumped on console by default.
+- `$dmesg -w or $dmesg --follow // this will keep printing dmesg whenever there will be addition of logs to buffer.
+- Make dmesg with -w option running in background and whatever debugging or testing we'll be doing, we will have dmesg logs.
+- `$dmesg -w &` this is the command to make it run in background.
+![image](https://github.com/user-attachments/assets/884f0b2c-74dd-4d13-b4ed-e5c69e4ed078)
+
+# What happens when exit function is not present
+- Check `linux_src/kernel/module.c`, SYSCALL_DEF* and check delete_module. it checks init_module and exit_module presence. if not send -EBUSY
+- `$errno EBUSY`
+![image](https://github.com/user-attachments/assets/351e8576-7d75-4983-b354-583b47f99d7c)
+- To remove, reboot required.
+
+# What happens when init function is not present
+- Compiles and gets loaded without init function
+![image](https://github.com/user-attachments/assets/a3538ddd-2313-4830-b417-6f937cebeb1b)
+- insmod and rmmod both worked.
+
+# Are init and exit are mandatory?
+- Check this smallest kernel module
+![image](https://github.com/user-attachments/assets/a187159f-7cf1-4355-9dfe-0d3f9eb0f398)
+- Used when, a LKM is having a lot of functional implementation, which are being used by other LKM.
+
+# Cross compilation
+![image](https://github.com/user-attachments/assets/e092ff4c-624c-434f-9ca0-c07674a94dfe)
+- $file hello.ko // shows the attributes of the file. (https://www.udemy.com/course/learn-linux-kernel-programming/learn/lecture/22139088#reviews)
+
+# .c to .ko using kbuild
+![image](https://github.com/user-attachments/assets/34b86444-33a9-4c9f-a3b1-8c5267d1aa5c)
+![image](https://github.com/user-attachments/assets/33216913-661a-4255-844b-9eeeba0771ad)
+.c -> .o, .mod.order(order of module creation in case of multiple modules), .mod.symvers(contains symbols exported by Module?) .mod.c (contains version info) -> .mod.o -> .ko
+
+# modprobe vs insmod
+- Uses standard path (/lib/modules/'uanme -r') and also resolves module dependencies
+![image](https://github.com/user-attachments/assets/ba561480-07e8-4339-baef-e7c4b87dad4e)
+- Uses `depmod`, which generates modules.dep and map files
+- `$cd /lib/modules/'uname -r'` and then `$ls && cat modules.dep`
+![image](https://github.com/user-attachments/assets/ec7a4fe5-6468-4e2b-a235-453c0827431a)
+- Modules are added in right to left, and while removing, Modules are removed from left to right from .dep file.
+- Reload modules.dep by `$depmod -a`
+
+# Typechecking of module_init() and module_exit() functions
+![image](https://github.com/user-attachments/assets/63f55d81-02e8-4e8b-a483-c3d8d4625224)
+- observe aliasing of passed functions to cleanup_module and init_module.
+
+# 
+# 
